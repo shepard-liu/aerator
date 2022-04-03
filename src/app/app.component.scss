@@ -1,0 +1,47 @@
+:host{
+    display: block;
+    height: 100vh;
+}
+
+#appToolbar{
+    flex-wrap: wrap;
+}
+
+.aerator-menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu-hint {
+    padding: 20px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.toolbar-space {
+    flex: 1;
+}
+
+#currentAerator{ 
+    span{
+        font-size: 14px;
+        font-weight: normal;
+    }
+
+    span:first-child{
+        margin-right: 5px;
+    }
+}
+
+@media screen and (max-width:599px) {
+    #currentAerator{
+        display: flex;
+        flex-direction: column;
+        line-height: 1em;
+
+        span:first-child{
+            font-size: 10px;
+        }
+    }
+}

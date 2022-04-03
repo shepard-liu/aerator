@@ -1,0 +1,42 @@
+<div id="aeratorControl">
+    <mat-slide-toggle id="autoControl" [checked]="autoControlActive" (change)="handleAutoControlActiveChange()">
+        启用增氧机自动控制
+    </mat-slide-toggle>
+    <div id="manualControlPanel" class="control-panel">
+        <mat-radio-group [disabled]="autoControlActive" [value]="powerManualControlMode?.toString()"
+            (change)="handlePowerManualControlModeChange($event)">
+            <mat-radio-button value="1">手动接通增氧机电源</mat-radio-button>
+            <mat-radio-button value="2">手动关闭增氧机电源</mat-radio-button>
+            <mat-radio-button value="0">禁止手动增氧机控制</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <h3 id="controlOptions">控制参数</h3>
+    <div id="controlOptionsPanel" class="control-panel">
+        <app-labelled-field label="前置时间判定选择">
+            <mat-select id="leadTimeSelect" [value]="leadTimeJudgement?.toString()"
+                (selectionChange)="handleLeadTimeJudgementSelectionChange($event)">
+                <mat-option value="4">前10分钟平均值</mat-option>
+                <mat-option value="5">前20分钟平均值</mat-option>
+                <mat-option value="1">前30分钟平均值</mat-option>
+                <mat-option value="2">前1小时平均值</mat-option>
+                <mat-option value="3">前1.5小时平均值</mat-option>
+                <mat-option value="9">前10分钟最小值</mat-option>
+                <mat-option value="10">前20分钟最小值</mat-option>
+                <mat-option value="6">前30分钟最小值</mat-option>
+                <mat-option value="7">前1小时最小值</mat-option>
+                <mat-option value="8">前1.5小时最小值</mat-option>
+            </mat-select>
+        </app-labelled-field>
+        <app-labelled-field label="平均值阈值">
+            <input [value]="avgThres" (input)="handleInputValueChange('avgThres',$event)" />
+        </app-labelled-field>
+        <app-labelled-field label="最小值阈值">
+            <input [value]="minThres" (input)="handleInputValueChange('minThres',$event)" />
+        </app-labelled-field>
+        <app-labelled-field label="低值比例(%)">
+            <input [value]="lowValueRatio" (input)="handleInputValueChange('lowValueRatio',$event)" />
+        </app-labelled-field>
+
+    </div>
+</div>

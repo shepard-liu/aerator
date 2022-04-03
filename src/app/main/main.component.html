@@ -1,0 +1,29 @@
+<mat-tab-group id="mainTabs" headerPosition="below" selectedIndex="2">
+    <mat-tab label="水质传感器">
+        <ng-template mat-tab-label class="main-tab-label">
+            <mat-icon>water_drop</mat-icon>
+            <span>水质传感器</span>
+        </ng-template>
+        <app-controller-section title="水质实时监控">
+            <app-water-quality></app-water-quality>
+        </app-controller-section>
+    </mat-tab>
+    <mat-tab label="增氧机控制">
+        <ng-template mat-tab-label class="main-tab-label">
+            <mat-icon>settings</mat-icon>
+            <span>增氧机控制</span>
+        </ng-template>
+        <app-controller-section title="增氧机控制">
+            <app-aerator-control></app-aerator-control>
+        </app-controller-section>
+    </mat-tab>
+    <mat-tab label="时间策略">
+        <ng-template mat-tab-label class="main-tab-label">
+            <mat-icon>timer</mat-icon>
+            <span>时间策略</span>
+        </ng-template>
+        <app-controller-section title="时间策略">
+            <app-time-strategy></app-time-strategy>
+        </app-controller-section>
+    </mat-tab>
+</mat-tab-group>

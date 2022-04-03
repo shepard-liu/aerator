@@ -1,0 +1,60 @@
+:host {
+    padding: 10vh 30vw;
+    display: flex;
+    flex-direction: column;
+}
+
+@media screen and (max-width:599px) {
+    :host{    
+        padding: 10vh 10vw;
+        h1{
+            font-size: 30px;
+            line-height: 2em;
+        }
+    }
+
+}
+
+form {
+}
+
+h1 {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 80px;
+    font-weight: bold;
+}
+
+.login-field {
+    margin: 20px 0;
+    display: block;
+
+    input {
+        font-size: 18px;
+    }
+}
+
+.login-message {
+    color: red;
+    text-align: right;
+    max-height: 0;
+
+    transition: max-height 400ms ease-in-out;
+}
+
+.login-message-show {
+    max-height: 30px;
+}
+
+.button-group {
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    button {
+        width: 40%;
+        height: 40px;
+        font-size: 18px;
+    }
+}

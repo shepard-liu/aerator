@@ -1,0 +1,51 @@
+.time-control-section{
+    h3{
+        font-size: 18px;
+    }
+
+    margin-bottom: 30px;
+}
+
+.time-control-panel{
+    background-color: #eee;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.time-control-item{
+
+}
+
+.time-control-item-time-field{
+    width: 48%;
+}
+
+.time-control-item-start-time-field{
+    margin-right: 4%;
+}
+
+.time-control-item-ratio-field{
+    width: 100%;
+}
+
+.clear-button{
+    margin-top: 5px;
+    margin-left: auto;
+    display: block;
+}
+
+#syncOfflineSetting{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px 0 15px 0;
+    div{
+        background-color: #eee;
+        padding: 5px;
+        border-radius: 5px;
+
+        span:first-child{
+            margin-right: 5px;
+        }
+    }
+}

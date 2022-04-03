@@ -1,0 +1,52 @@
+<section class="time-control-section">
+    <h3>时间控制方式</h3>
+    <div class="time-control-panel">
+        <app-labelled-field *ngFor="let i of [0,1,2,3]" class="time-control-item" [label]="'控制器开启时间'+(i+1)">
+            <mat-form-field appearance="fill" class="time-control-item-time-field time-control-item-start-time-field">
+                <mat-label>开始</mat-label>
+                <input matInput type="time" [value]="activeTimeParams[i].start"
+                    (change)="handleTimeInputChange('time'+(i+1)+'_s',$event)" />
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="time-control-item-time-field time-control-item-end-time-field">
+                <mat-label>结束</mat-label>
+                <input matInput type="time" [value]="activeTimeParams[i].end"
+                    (change)="handleTimeInputChange('time'+(i+1)+'_e',$event)" />
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="time-control-item-ratio-field">
+                <mat-label>基础时间比例</mat-label>
+                <input matInput type='number' [value]="activeTimeParams[i].ratio"
+                    (change)="handleTimeRatioInputChange('time'+(i+1)+'_r',$event)" />
+                <span matSuffix>%</span>
+            </mat-form-field>
+            <button mat-raised-button class="clear-button" color="warn"
+                (click)="handleRemoveTimeField('time'+(i+1),i,false)">清空设定</button>
+        </app-labelled-field>
+    </div>
+</section>
+
+<section class="time-control-section">
+    <h3>断网时控制设置</h3>
+    <div id="syncOfflineSetting">
+        <button mat-button (click)="handleUpdateOfflineSetting()">立即同步</button>
+        <div>
+            <span>同步时间</span>
+            <span>{{offlineSyncTime}}</span>
+        </div>
+    </div>
+    <div class="time-control-panel">
+        <app-labelled-field *ngFor="let i of [0,1,2,3]" class="time-control-item" [label]="'控制器开启时间'+(i+1)">
+            <mat-form-field appearance="fill" class="time-control-item-time-field time-control-item-start-time-field">
+                <mat-label>开始</mat-label>
+                <input matInput type="time" [value]="offlineActiveTimeRanges[i].start"
+                    (change)="handleTimeInputChange('brk_time'+(i+1)+'_s',$event)" />
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="time-control-item-time-field time-control-item-end-time-field">
+                <mat-label>结束</mat-label>
+                <input matInput type="time" [value]="offlineActiveTimeRanges[i].end"
+                    (change)="handleTimeInputChange('brk_time'+(i+1)+'_e',$event)" />
+            </mat-form-field>
+            <button mat-raised-button class="clear-button" color="warn"
+                (click)="handleRemoveTimeField('brk_time'+(i+1),i,true)">清空设定</button>
+        </app-labelled-field>
+    </div>
+</section>

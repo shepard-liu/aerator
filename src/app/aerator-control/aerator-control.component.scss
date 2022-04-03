@@ -1,0 +1,68 @@
+#aeratorControl{
+
+    #autoControl{
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    
+    }
+
+    .control-panel{
+        background-color: #eee;
+        padding: 5px 25px;
+        border-radius: 5px;
+    }
+
+    .label{
+        margin-bottom: 12px;
+        font-size: 16px;
+    }
+
+    app-labelled-field{
+        margin: 12px 0;
+    }
+
+    input{
+        border: none;
+        width: 100%;
+        border-radius: 5px;
+        height: 36px;
+        font-size: 14px;
+        padding: 0 8px;
+    }
+    
+    #manualControlPanel{
+        mat-radio-button{
+            display: block;
+            margin: 18px 0;
+            font-size: 16px;
+        }
+    }
+    
+    #leadTimeSelect{
+        border-radius: 5px;
+        height: 40px;
+        padding: 5px 10px;
+        background-color: white;
+    
+        .mat-select-trigger{
+            height: 100%;
+            display: flex;
+            align-items: center;
+            
+            .mat-select-value{
+                flex:1;
+                max-width: unset;
+            }
+        }
+    }
+    
+    #controlOptions{
+        margin-top: 30px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    
+    #controlOptionsPanel{
+    }
+}

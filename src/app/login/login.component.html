@@ -1,0 +1,22 @@
+<h1>登陆增氧机管理系统</h1>
+
+<form (submit)="$event.preventDefault()">
+    <mat-form-field appearance="fill" class="login-field">
+        <mat-label>用户名</mat-label>
+        <input size="large" matInput placeholder="请输入您的用户名" (change)="handleInput('username',$event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="login-field">
+        <mat-label>密码</mat-label>
+        <input matInput type="password" placeholder="请输入您的密码" (change)="handleInput('password',$event)" />
+    </mat-form-field>
+
+    <div [class]="loginMessageClasses">
+        {{loginMessage}}
+    </div>
+
+    <div class="button-group">
+        <button mat-raised-button type="submit" color="primary" (click)="handleLogin()">登陆</button>
+        <button mat-raised-button>忘记密码</button>
+    </div>
+</form>
