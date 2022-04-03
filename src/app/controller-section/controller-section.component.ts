@@ -1,3 +1,7 @@
+/**
+ * 增氧机控制面板区域。只是提供一个带有样式的title
+ * @author shepard
+ */
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({

@@ -1,3 +1,8 @@
+/**
+ * 增氧机控制 面板
+ * @author shepard
+ */
+
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSelectChange } from '@angular/material/select';

@@ -1,3 +1,8 @@
+/**
+ * 登陆组件
+ * @author shepard
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';

@@ -1,3 +1,8 @@
+/**
+ * 水质监测面板
+ * @author shepard
+ */
+
 import { Component, OnInit, } from '@angular/core';
 import { AeratorService } from '../aerator.service';
 import { AeratorStatusName } from '../types';

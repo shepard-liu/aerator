@@ -1,3 +1,8 @@
+/**
+ * 图表配置文件
+ * @author shepard
+ */
+
 import echarts, { MyEchartsOption } from './echartsInit';
 
 // 溶氧量图表配置

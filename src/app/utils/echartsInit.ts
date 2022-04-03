@@ -1,4 +1,8 @@
-// 导入Echarts
+/**
+ * Echarts按需导入
+ * @author shepard
+ */
+
 import * as echarts from 'echarts/core';
 import { LineChart, LineSeriesOption } from 'echarts/charts';
 import {
@@ -9,11 +13,10 @@ import {
     DatasetComponent,
     DatasetComponentOption,
     GridComponent,
-    GraphicComponentOption,
+    GridComponentOption,
 
 } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
-import { GridComponentOption } from 'echarts';
 
 // Echarts Options
 export type MyEchartsOption = echarts.ComposeOption<

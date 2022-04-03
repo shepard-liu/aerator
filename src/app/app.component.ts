@@ -1,3 +1,8 @@
+/**
+ * 增氧机管理应用
+ * @author shepard
+ */
+
 import { Component } from '@angular/core';
 import { UserService } from './user.service';
 import { Router } from '@angular/router';
@@ -36,12 +41,14 @@ export class AppComponent {
     // 订阅aeratorId改变
     aeratorService.subscribeAeratorIdChange((currentId) => {
       this.currentAerator = { id: currentId };
+
+      // 请求当前账户下的增氧机
+      aeratorService.getRelatedAerators()
+        .then(aerators => { this.relatedAerators = aerators })
+        .catch(console.log);
     });
 
-    // 请求当前账户下的增氧机
-    aeratorService.getRelatedAerators()
-      .then(aerators => { this.relatedAerators = aerators })
-      .catch(console.log);
+
   }
 
   /**

@@ -1,4 +1,5 @@
-<mat-tab-group id="mainTabs" headerPosition="below" selectedIndex="2">
+<mat-tab-group id="mainTabs" headerPosition="below" [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="handleTabChange($event)">
     <mat-tab label="水质传感器">
         <ng-template mat-tab-label class="main-tab-label">
             <mat-icon>water_drop</mat-icon>
