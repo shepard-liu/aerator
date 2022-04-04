@@ -3,10 +3,17 @@
  * @author shepard
  */
 
+import { APP_BASE_HREF } from '@angular/common';
 import { Injectable } from '@angular/core';
-import { Aerator, AeratorCtrlParams, AeratorRemovableTimeParamNames, AeratorStatusName, AeratorUpdatableCtrlParamNames } from './types';
-import { UserService } from './user.service';
-import { sendGetCtrlParamsRequestAsync, sendUpdateCtrlParamsRequestAsync, sendRemoveTimeParamRequestAsync, sendLoginRequestAsync, sendGetDefaultIotRequestAsync, sendUpdateLastFreeTimeRequestAsync } from './utils/ajaxUtils';
+import { Aerator, AeratorCtrlParams, AeratorGroup, AeratorRemovableTimeParamNames, AeratorStatusName, AeratorUpdatableCtrlParamNames } from './types';
+import { sendGetCtrlParamsRequestAsync, sendUpdateCtrlParamsRequestAsync, sendRemoveTimeParamRequestAsync, sendLoginRequestAsync, sendGetDefaultIotRequestAsync, sendUpdateLastFreeTimeRequestAsync, sendGetAvailableDevicesRequestAsync, sendGetStatusRequestAsync } from './utils/ajaxUtils';
+
+// 增氧机Id订阅
+interface AeratorIdSubscription {
+  cancelSubscription: () => void;
+}
+
+type AeratorSubscriber = (aerator: Aerator, ctrlParams: AeratorCtrlParams) => unknown;
 
 @Injectable({
   providedIn: 'root'
@@ -16,34 +23,47 @@ export class AeratorService {
   constructor() {
   }
 
-  //* 当前增氧机id
-  private _aeratorId: string = null;
-  get aeratorId() {
-    return this._aeratorId;
+  /**
+   * 在登陆后初始化本服务！
+   */
+  async init() {
+    this._aeratorGroups = await this.getAvailableAerators();
+    this.aerator = await this.getDefaultAerator();
   }
-  set aeratorId(id: string) {
-    if (id === this.aeratorId) return;
-    this._aeratorId = id;
 
-    sendGetCtrlParamsRequestAsync(id).then((params) => {
+  //* 可用增氧机列表
+  private _aeratorGroups: AeratorGroup[] = null;
+  get aeratorGroups() { return this._aeratorGroups; }
+
+  //* 当前增氧机
+  private _aerator: Aerator = null;
+  get aerator() {
+    return this._aerator;
+  }
+  set aerator(a: Aerator) {
+    if (a?.id === this.aerator?.id) return;
+    if (!this._aeratorGroups.find((group) => group.children.find((_a) => _a.id === a.id)))
+      throw new Error('Aerator does not exist.');
+
+    this._aerator = a;
+
+    sendGetCtrlParamsRequestAsync(a.id).then((params) => {
       // 在本服务先获取了增氧机控制参数后，再通知所有id订阅者
-      this.idSubscribers.forEach(subscriber => { subscriber(this._aeratorId, params.result); });
+      this.idSubscribers.forEach(subscriber => { subscriber(a, params.result); });
     }).catch(console.log);
   }
 
-  //* 增氧机状态获取
-  async getStatus(status: AeratorStatusName): Promise<number | never> {
-    // TODO: 增加请求代码
-    switch (status) {
-      case 'dol':
-        return new Promise((resolve, reject) => resolve(Math.random() + 20));
-      case 'pH':
-        return new Promise((resolve, reject) => resolve(Math.random() + 7));
-      case 'water-temper':
-        return new Promise((resolve, reject) => resolve(Math.random() + 22));
-      default:
-        throw new Error('Unknown status specified.');
+  //* 由id获取增氧机
+  getAeratorById(id: string) {
+    // 检查aeratorGroup是否已获取
+    if (!this._aeratorGroups) throw new Error('Aerator groups not acquired.');
+
+    // 使用id搜索目标增氧机
+    for (const group of this._aeratorGroups) {
+      const target = group.children.find((a) => a.id === id);
+      if (target) return target;
     }
+    return null;
   }
 
   //* 增氧机id改变时调用，通知订阅此变化的组件
@@ -52,20 +72,16 @@ export class AeratorService {
   /**
    * 订阅增氧机Id改变（用户触发）
    * @param subscriber 订阅回调函数，增氧机改变时调用
-   * @param initCall 是否在订阅后立即调用
    * @returns AeratorIdSubscription 订阅对象
    */
-  subscribeAeratorIdChange(subscriber: AeratorSubscriber, initCall?: boolean): AeratorIdSubscription {
+  subscribeAeratorIdChange(subscriber: AeratorSubscriber): AeratorIdSubscription {
     const idSubscribers = this.idSubscribers;
     idSubscribers.push(subscriber);
-
-    const _self = this;
 
     const subscriberIndex = idSubscribers.length - 1;
     let isSubscribed = true;
 
     return {
-      getCurrentId() { return _self.aeratorId; },
       cancelSubscription() {
         if (!isSubscribed) return;
         idSubscribers.splice(subscriberIndex, 1);
@@ -74,9 +90,23 @@ export class AeratorService {
     };
   }
 
+  /**
+   * 请求增氧机状态信息
+   * @param status 状态名
+   * @param prevMinutes 先前的分钟数
+   * @param prevMaxId 先前状态点最大id
+   * @returns 
+   */
+  async getStatus(status: AeratorStatusName, prevMinutes?: number, prevMaxId?: number) {
+    return await sendGetStatusRequestAsync(this._aerator.id, status, prevMinutes || 15, prevMaxId || null);
+  }
+
+  /**
+   * 获取用户默认的Aerator设备
+   * @returns 
+   */
   async getDefaultAerator(): Promise<Aerator> {
-    // TODO:（需要后端支持）在凭证未过期的情况下获取当前用户默认的增氧机设备id
-    return { id: await sendGetDefaultIotRequestAsync() };
+    return this.getAeratorById(await sendGetDefaultIotRequestAsync());
   }
 
   /**
@@ -84,12 +114,8 @@ export class AeratorService {
    * @returns 增氧机信息数组
    * @throws 用户状态错误
    */
-  async getRelatedAerators(): Promise<Aerator[]> {
-    // TODO：暂时返回当前的iot
-    //!目前已知的问题：(解决需要后端提供接口)
-    // 1. 刷新页面之后当前iot会消失，因为只有在登陆时才能获取default_iot。
-    // 2. 无法获取账户可用的iot列表。
-    return this.aeratorId ? [{ id: this.aeratorId }] : [];
+  async getAvailableAerators() {
+    return await sendGetAvailableDevicesRequestAsync();
   }
 
   /**
@@ -101,7 +127,7 @@ export class AeratorService {
   async updateAeratorCtrlParam<T extends AeratorUpdatableCtrlParamNames>(
     param: T,
     value: AeratorCtrlParams[T]) {
-    return await sendUpdateCtrlParamsRequestAsync(this._aeratorId, param, value);
+    return await sendUpdateCtrlParamsRequestAsync(this._aerator.id, param, value);
   }
 
   /**
@@ -110,7 +136,7 @@ export class AeratorService {
    * @returns 
    */
   async removeAeratorTimeParam(timeToRemove: AeratorRemovableTimeParamNames) {
-    return await sendRemoveTimeParamRequestAsync(this._aeratorId, timeToRemove);
+    return await sendRemoveTimeParamRequestAsync(this._aerator.id, timeToRemove);
   }
 
   /**
@@ -118,14 +144,6 @@ export class AeratorService {
    * @returns 
    */
   async updateOfflineTimeParamSetting() {
-    return await sendUpdateLastFreeTimeRequestAsync(this._aeratorId);
+    return await sendUpdateLastFreeTimeRequestAsync(this._aerator.id);
   }
 }
-
-// 增氧机Id订阅
-interface AeratorIdSubscription {
-  getCurrentId: () => string;
-  cancelSubscription: () => void;
-}
-
-type AeratorSubscriber = (currentId: string, ctrlParams: AeratorCtrlParams) => unknown;

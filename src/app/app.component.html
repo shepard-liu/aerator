@@ -5,13 +5,18 @@
 
 	<mat-menu #menu class="aerator-menu">
 		<div class="menu-hint">选择账户关联的增氧机</div>
-		<button (click)="handleChangeAerator(aerator)" class="aerator-menu-item" *ngFor="let aerator of relatedAerators"
-			mat-menu-item>
-			<span>增氧机 {{aerator.id}}</span>
-			<mat-icon *ngIf="aerator.id===currentAerator?.id">
-				signal_cellular_alt
-			</mat-icon>
-		</button>
+		<div class="aerator-menu-group" *ngFor="let group of aeratorGroups" mat-menu-item>
+			<div class="aerator-menu-group-label">{{group.text}}</div>
+			<button class="aerator-menu-item" (click)="handleChangeAerator(aerator)"
+				*ngFor="let aerator of group.children">
+				<div class="aerator-menu-item-label">{{aerator.text}}</div>
+				<div class="aerator-menu-item-space"></div>
+				<mat-icon *ngIf="aerator.id===currentAerator?.id">
+					signal_cellular_alt
+				</mat-icon>
+				<span class="aerator-menu-item-status" [attr.data-state]="aerator.state"></span>
+			</button>
+		</div>
 	</mat-menu>
 
 	<span>增氧机管理系统</span>

@@ -4,8 +4,6 @@
  * @author shepard
  */
 
-import { ResponseGetCtrlParams } from "./httpTypes";
-
 export interface User {
     username: string,
     password: string,
@@ -13,6 +11,13 @@ export interface User {
 
 export interface Aerator {
     id: string,
+    text: string,
+    state: boolean
+}
+
+export interface AeratorGroup {
+    children: Aerator[],
+    text: string,
 }
 
 // 增氧机状态
@@ -66,3 +71,4 @@ export type AeratorLeadTimeJudgementValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 
 export type AeratorManualMode = 0 | 1 | 2;
 
 export type AeratorRemovableTimeParamNames = 'time1' | 'time2' | 'time3' | 'time4' | 'brk_time1' | 'brk_time2' | 'brk_time3' | 'brk_time4';
+

@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 import { UserService } from './user.service';
 import { Router } from '@angular/router';
 import { AeratorService } from './aerator.service';
-import { Aerator } from './types';
+import { Aerator, AeratorGroup } from './types';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +16,7 @@ import { Aerator } from './types';
 })
 export class AppComponent {
   title = 'feeder';
-  relatedAerators: Aerator[] = [];
+  aeratorGroups: AeratorGroup[] = [];
   currentAerator: Aerator = null;
 
   constructor(
@@ -25,26 +25,23 @@ export class AppComponent {
     public userService: UserService) {
 
     // 若没有登陆，则跳转到/login；若已经登陆，则跳转到/main
-    if (!userService.isLoggedIn())
+    if (!userService.isLoggedIn()) {
       router.navigateByUrl('/login');
-    else {
-      // 获取当前增氧机
-      aeratorService.getDefaultAerator().then((value) => {
-        aeratorService.aeratorId = value.id;
-        return aeratorService.getRelatedAerators();
-      }).then((value) => {
-        this.relatedAerators = value;
+    } else {
+      aeratorService.init().then(() => {
+        this.aeratorGroups = aeratorService.aeratorGroups;
+        this.currentAerator = aeratorService.aerator;
       }).catch(console.log);
       router.navigateByUrl('/main');
     }
 
     // 订阅aeratorId改变
-    aeratorService.subscribeAeratorIdChange((currentId) => {
-      this.currentAerator = { id: currentId };
+    aeratorService.subscribeAeratorIdChange((aerator) => {
+      this.currentAerator = aerator;
 
       // 请求当前账户下的增氧机
-      aeratorService.getRelatedAerators()
-        .then(aerators => { this.relatedAerators = aerators })
+      aeratorService.getAvailableAerators()
+        .then(aerators => { this.aeratorGroups = aerators })
         .catch(console.log);
     });
 
@@ -57,7 +54,7 @@ export class AppComponent {
    */
   handleChangeAerator(which: Aerator) {
     if (which !== this.currentAerator) {
-      this.aeratorService.aeratorId = which.id;
+      this.aeratorService.aerator = which;
     }
   }
 }

@@ -5,6 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AeratorService } from '../aerator.service';
 import { UserService } from '../user.service';
 
 @Component({
@@ -21,6 +22,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    private aeratorService: AeratorService,
     private router: Router
   ) { }
 
@@ -37,11 +39,14 @@ export class LoginComponent implements OnInit {
     let isLoggedIn: boolean = false;
     try {
       isLoggedIn = await this.userService.login({ username, password });
+      this.aeratorService.init();
     } catch (err) {
       console.log(err);
     }
 
-    if (isLoggedIn) this.router.navigateByUrl('/main');
+    if (isLoggedIn) {
+      this.router.navigateByUrl('/main');
+    }
     else {
       this.loginMessage = '登陆失败，请检查用户名和密码';
       this.loginMessageClasses = 'login-message login-message-show';

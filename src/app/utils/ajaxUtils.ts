@@ -4,8 +4,8 @@
  */
 
 import { environment } from "src/environments/environment";
-import { AeratorCtrlParams, AeratorRemovableTimeParamNames, AeratorUpdatableCtrlParamNames } from "../types";
-import { RequestUser, ResponseUser, RequestGetCtrlParams, ResponseGetCtrlParams, RequestUpdateCtrlParam, ResponseUpdateCtrlParam, RequestUpdateLastFreeTime, RequestRemoveTimeParam, ResponseRemoveTimeParam, ResponseUpdateLastFreeTime } from "../types/httpTypes";
+import { AeratorCtrlParams, AeratorRemovableTimeParamNames, AeratorStatusName, AeratorUpdatableCtrlParamNames } from "../types";
+import { RequestUser, ResponseUser, RequestGetCtrlParams, ResponseGetCtrlParams, RequestUpdateCtrlParam, ResponseUpdateCtrlParam, RequestUpdateLastFreeTime, RequestRemoveTimeParam, ResponseRemoveTimeParam, ResponseUpdateLastFreeTime, RequestGetDefaultIotId, ResponseGetDefaultIotId, RequestGetAvailableDevices, ResponseGetAvailableDevices, RequestGetStatus, ResponseGetStatus } from "../types/httpTypes";
 
 /**
  * 发送请求（Async）
@@ -19,7 +19,7 @@ export async function sendRequestAsync(fname: string, fparam: Object, sendCreden
         ...(sendCredentials === false ? null : JSON.parse(localStorage.getItem('credentials')))
     };
 
-    const res = await fetch(
+    return await fetch(
         environment.production
             ? './fishsystem/getData.jsp'
             : 'http://47.93.237.6:8080/fishsystem/getData.jsp', {
@@ -31,7 +31,6 @@ export async function sendRequestAsync(fname: string, fparam: Object, sendCreden
             fparam: JSON.stringify(fparamWithCredentials)
         }),
     });
-    return res;
 }
 
 /**
@@ -52,8 +51,6 @@ export async function sendRequestAsyncJson<RequestBodyType, ResponseBodyType>(fn
  */
 export async function sendLoginRequestAsync(username: string, password: string): Promise<{ isLoggedIn: boolean, default_iot: string }> {
     localStorage.removeItem('credentials');
-    localStorage.removeItem('username');
-    localStorage.removeItem('password');
 
     const res = await sendRequestAsyncJson<RequestUser, ResponseUser>(
         'getuserinfo', {
@@ -67,22 +64,63 @@ export async function sendLoginRequestAsync(username: string, password: string):
 
     // 将用户凭证保存
     localStorage.setItem('credentials', JSON.stringify({ uid: res.result.usr_id, s_id: res.result.uid }));
-    localStorage.setItem('username', username);
-    localStorage.setItem('password', password);
 
     return { isLoggedIn: true, default_iot: res.default_iot };
 }
 
 /**
- * 请求当前用户默认的iot设备，
- * 该函数暂时使用localStorage中存储的用户名和密码。
- * 当后端提供使用sid和uid请求的接口后修改此函数
+ * 请求当前用户默认的iot设备
+ * @returns 默认的iot设备id
  */
 export async function sendGetDefaultIotRequestAsync() {
-    //TODO：错误处理
-    return (await sendLoginRequestAsync(
-        localStorage.getItem('username'),
-        localStorage.getItem('password'))).default_iot;
+    return (await sendRequestAsyncJson<RequestGetDefaultIotId, ResponseGetDefaultIotId>(
+        'getdefaultiot', {
+        isaerator: 1
+    })).result.default_iot_id;
+}
+
+/**
+ * 请求当前用户可用的设备列表
+ * @returns 
+ */
+export async function sendGetAvailableDevicesRequestAsync() {
+    return (await sendRequestAsyncJson<RequestGetAvailableDevices, ResponseGetAvailableDevices>(
+        'getpool', {
+        isaerator: 1
+    })).result.list;
+}
+
+/**
+ * 请求增氧机水质监测状态
+ * @param iotId 增氧机id
+ * @param statusName 状态名
+ * @param prevMinutes 先前的分钟数
+ * @param prevMaxId 先前最大的状态点id
+ * @returns 
+ */
+export async function sendGetStatusRequestAsync(iotId: string, statusName: AeratorStatusName, prevMinutes: number, prevMaxId: number) {
+    let fname = '';
+    switch (statusName) {
+        case 'dol': fname = 'do'; break;
+        case 'pH': fname = 'ph'; break;
+        case 'water-temper': fname = 'temp'; break;
+        default:
+            throw new Error('Unknown status name');
+    }
+
+    const res = await sendRequestAsyncJson<RequestGetStatus, ResponseGetStatus>(
+        'getpond_water_quality', {
+        fname,
+        unique_iot_id: iotId,
+        prev_max_id: prevMaxId,
+        prev_minutes: prevMinutes
+    });
+
+    return {
+        points: res.result.pts,
+        prevMaxId: res.max_id,
+        status: res.result.status
+    }
 }
 
 /**

@@ -3,7 +3,7 @@
  * @author shepard
  */
 
-import { AeratorCtrlParams, AeratorLeadTimeJudgementValue, AeratorManualMode } from ".";
+import { AeratorCtrlParams, AeratorGroup, AeratorLeadTimeJudgementValue, AeratorManualMode } from ".";
 
 export interface RequestUser {
     email: string,
@@ -22,6 +22,17 @@ export interface ResponseUser {
         contacts: string
     },
     default_iot: string
+}
+
+export interface RequestGetDefaultIotId {
+    isaerator: 1 | 0;
+}
+
+export interface ResponseGetDefaultIotId {
+    code: number;
+    result: {
+        default_iot_id: string;
+    }
 }
 
 export interface RequestGetCtrlParams {
@@ -66,4 +77,33 @@ export interface ResponseRemoveTimeParam {
     result: {
         flag: true;
     }
+}
+
+export interface RequestGetAvailableDevices {
+    isaerator: 1 | 0
+}
+
+export interface ResponseGetAvailableDevices {
+    code: number;
+    result: {
+        list: AeratorGroup[]
+    }
+}
+
+
+export interface RequestGetStatus {
+    unique_iot_id: string,
+    fname: string,
+    prev_minutes: number,
+    prev_max_id: number,
+}
+
+export interface ResponseGetStatus {
+    code: number;
+    max_id: number;
+    result: {
+        pts: { id: number, x: number, y: number }[];
+        status: number;
+    };
+    type: number
 }

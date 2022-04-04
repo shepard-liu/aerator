@@ -25,6 +25,8 @@ export class TimeStrategyComponent implements OnInit {
   offlineActiveTimeRanges: TimeRange[] = Array(4).fill({ start: '', end: '' });
   // 断网同步时间
   offlineSyncTime: string = null;
+  // 控制器同步更新时间
+  controllerSyncTime: string = null;
 
 
   constructor(private aeratorService: AeratorService) {
@@ -47,6 +49,7 @@ export class TimeStrategyComponent implements OnInit {
       }
 
       this.offlineSyncTime = ctrlParams.last_updated_controltime_time;
+      this.controllerSyncTime = ctrlParams.controller_eff_time;
     });
   }
 

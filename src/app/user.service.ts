@@ -25,10 +25,7 @@ export class UserService {
    */
   async login(user: User): Promise<boolean> {
     const { username, password } = user;
-    const { default_iot, isLoggedIn } = await sendLoginRequestAsync(username, password);
-    // 设置当前的默认iot
-    if (isLoggedIn)
-      this.aeratorService.aeratorId = default_iot;
+    const { isLoggedIn } = await sendLoginRequestAsync(username, password);
     return isLoggedIn;
   }
 

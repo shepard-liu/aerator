@@ -41,11 +41,27 @@
     margin: 5px 0 15px 0;
     div{
         background-color: #eee;
-        padding: 5px;
+        padding: 5px 10px;
         border-radius: 5px;
 
         span:first-child{
             margin-right: 5px;
         }
+    }
+}
+
+#controllerSyncTime{
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    span:first-child{
+        color:#666;
+    }
+
+    span:last-child{
+        background-color: #eee;
+        padding: 5px 10px;
+        border-radius: 5px;
     }
 }

@@ -44,7 +44,7 @@ export const dolChartOption: MyEchartsOption = {
 
 
 
-// 溶氧量图表配置
+// pH图表配置
 export const pHChartOption: MyEchartsOption = {
     xAxis: {
         type: 'time',
@@ -82,7 +82,7 @@ export const pHChartOption: MyEchartsOption = {
 }
 
 
-// 溶氧量图表配置
+// 水温图表配置
 export const waterTemperChartOption: MyEchartsOption = {
     xAxis: {
         type: 'time',
